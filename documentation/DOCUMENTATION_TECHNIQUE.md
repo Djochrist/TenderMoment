@@ -50,6 +50,9 @@ Scripts définis dans `package.json` :
 ## 5) Variables d’environnement
 - `PORT` : port d’écoute (défaut `5000`)
 
+## 5.1) Observabilité (Vercel)
+- `@vercel/speed-insights` est intégré côté client via `client/src/main.tsx` (activé uniquement en production).
+
 ## 6) Déploiement
 
 ### Option A — Déploiement statique (si aucune API)

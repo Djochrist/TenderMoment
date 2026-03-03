@@ -64,3 +64,6 @@ Deux options :
 
 ## Documentation technique
 Voir `documentation/DOCUMENTATION_TECHNIQUE.md`.
+
+## Vercel Speed Insights
+Le composant `SpeedInsights` est chargé en production (voir `client/src/main.tsx`).
