@@ -4,7 +4,7 @@ Ce document décrit l’architecture, le fonctionnement, les scripts et les opti
 
 ## 1) Vue d’ensemble
 TenderMoment est une application web conçue pour générer une expérience romantique partageable via un lien. L’app privilégie une approche **stateless** :
-- Les données de l’expérience sont encodées dans l’URL (Base64 + validation Zod).
+- Les données de l’expérience sont encodées côté client et incluses dans le lien.
 - Aucun stockage serveur n’est requis pour la fonctionnalité principale.
 
 ## 2) Architecture
@@ -12,9 +12,10 @@ TenderMoment est une application web conçue pour générer une expérience roma
 ### Frontend
 - Répertoire : `client/`
 - Stack : React + Vite + Tailwind CSS
-- Logique “stateless URL” : `client/src/hooks/use-experience-url.ts`
-  - Génération d’URL : `/experience?data=...`
-  - Décodage/validation : lecture du paramètre `data` + `experienceSchema`
+- Logique de lien chiffré : `client/src/hooks/use-experience-url.ts`
+  - Génération d’URL : `/experience#v=1&k=...&iv=...&c=...`
+  - Déchiffrement/validation : lecture du `#hash` + WebCrypto (AES-GCM) + `experienceSchema`
+  - Note : la clé est incluse dans le lien, donc toute personne qui possède le lien peut lire le contenu.
 
 ### Backend
 - Répertoire : `server/`
@@ -49,7 +50,30 @@ Scripts définis dans `package.json` :
 ## 5) Variables d’environnement
 - `PORT` : port d’écoute (défaut `5000`)
 
-## ) Dépannage (npm)
+## 6) Déploiement
+
+### Option A — Déploiement statique (si aucune API)
+- Build : `npm run build`
+- Servir : `dist/public`
+
+### Option B — Déploiement Node (API + statique)
+- Build : `npm run build`
+- Démarrage : `npm run start`
+- Artefacts : `dist/index.cjs` + `dist/public/`
+
+## 7) Migration Replit → GitHub (nettoyage)
+Ne commitez pas (ou supprimez) les fichiers/dossiers spécifiques à Replit :
+- `.replit`
+- `replit.nix`
+- `.local/`
+
+## 8) Sécurité & confidentialité du lien
+- Le payload est **chiffré** et stocké dans le `#hash` : il n’est pas envoyé au serveur dans la requête HTTP.
+- La **clé est incluse dans le lien** : toute personne qui possède le lien peut déchiffrer et lire le message.
+- Après ouverture, l’app retire le `#hash` (et `?data=` legacy) de la barre d’adresse via `history.replaceState` et conserve l’expérience en `sessionStorage` pour permettre un refresh sans ré-exposer le lien.
+- Compatibilité : les anciens liens `?data=...` restent lisibles, mais les nouveaux liens générés utilisent le format chiffré `#v=1...`.
+
+## 9) Dépannage (npm)
 
 ### `npm install` → `ENOTEMPTY ... rename node_modules/...`
 Cause fréquente : `node_modules` partiellement écrit (install interrompu) ou processus concurrent.

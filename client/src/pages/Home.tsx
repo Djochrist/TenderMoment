@@ -13,6 +13,7 @@ export default function Home() {
   const { generateLink } = useExperienceUrl();
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [showLink, setShowLink] = useState(false);
 
   const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<Experience>({
     resolver: zodResolver(experienceSchema),
@@ -23,9 +24,9 @@ export default function Home() {
 
   const selectedTheme = watch('theme');
 
-  const onSubmit = (data: Experience) => {
+  const onSubmit = async (data: Experience) => {
     try {
-      const url = generateLink(data);
+      const url = await generateLink(data);
       setGeneratedUrl(url);
       toast.success("Expérience générée avec succès !");
     } catch (err) {
@@ -38,6 +39,7 @@ export default function Home() {
     try {
       await navigator.clipboard.writeText(generatedUrl);
       setCopied(true);
+      setShowLink(false);
       toast.success("Lien copié dans le presse-papier !");
       setTimeout(() => setCopied(false), 3000);
     } catch (err) {
@@ -190,8 +192,16 @@ export default function Home() {
                   <input 
                     readOnly 
                     value={generatedUrl}
+                    type={showLink ? "text" : "password"}
                     className="bg-transparent text-white/50 text-sm w-full outline-none truncate font-mono"
                   />
+                  <button
+                    onClick={() => setShowLink((v) => !v)}
+                    className="px-3 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 text-white/80 rounded-lg transition-colors flex-shrink-0"
+                    title={showLink ? "Masquer le lien" : "Afficher le lien"}
+                  >
+                    {showLink ? "Masquer" : "Afficher"}
+                  </button>
                   <button 
                     onClick={copyToClipboard}
                     className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors flex-shrink-0"

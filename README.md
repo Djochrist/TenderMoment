@@ -1,6 +1,6 @@
 # TenderMoment
 
-Générateur d’expériences romantiques **partageables via un lien**. L’application est conçue pour rester **stateless** : l’expérience est encodée dans l’URL, sans dépendre d’une base de données.
+Générateur d’expériences romantiques **partageables via un lien**. L’expérience est encodée côté client et ne dépend pas d’une base de données.
 
 ## Fonctionnalités
 - Création d’une expérience (noms, message, ambiance visuelle)
@@ -44,6 +44,9 @@ npm run start
 
 ## Variables d’environnement
 - `PORT` : port d’écoute du serveur (défaut `5000`)
+
+## Confidentialité du lien
+Le lien `/experience#...` contient un payload chiffré **et** la clé de déchiffrement (dans le `#hash`) : toute personne ayant le lien peut lire le contenu, mais le contenu n’est pas envoyé au serveur dans la requête HTTP. Après ouverture, l’app enlève le `#hash` de la barre d’adresse (pour éviter l’exposition accidentelle) et garde les données en session.
 
 ## Structure du projet
 - `client/` : application React
