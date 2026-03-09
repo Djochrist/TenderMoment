@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 
 // Pages
 import Home from "./pages/Home";
+import Create from "./pages/Create";
 import Experience from "./pages/Experience";
 import NotFound from "./pages/not-found";
 
@@ -13,6 +14,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/creer" component={Create} />
       <Route path="/experience" component={Experience} />
       <Route component={NotFound} />
     </Switch>

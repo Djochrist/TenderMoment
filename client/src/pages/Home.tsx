@@ -1,236 +1,140 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Copy, Sparkles, Heart, Waves as WavesIcon, ArrowRight, CheckCircle2 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
+import { ArrowRight, LockKeyhole, Link2, Sparkles, ShieldCheck } from 'lucide-react';
 
-import { experienceSchema, type Experience } from '@shared/schema';
-import { useExperienceUrl } from '@/hooks/use-experience-url';
 import { ParticlesField } from '@/components/animations/MathBackgrounds';
 
+const benefits = [
+  {
+    icon: Sparkles,
+    title: 'Message personnalisé',
+    description: 'Rédigez un message sur mesure, choisissez une ambiance visuelle et composez une expérience cohérente.'
+  },
+  {
+    icon: Link2,
+    title: 'Partage par lien',
+    description: 'Un lien unique est généré immédiatement, sans création de compte ni étape technique inutile.'
+  },
+  {
+    icon: LockKeyhole,
+    title: 'Accès réservé par lien',
+    description: 'L’expérience n’est accessible qu’aux personnes disposant du lien de consultation.'
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Confidentialité renforcée',
+    description: 'Le fonctionnement du service privilégie un partage discret et une lecture plus rassurante.'
+  }
+];
+
 export default function Home() {
-  const { generateLink } = useExperienceUrl();
-  const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
-  const [showLink, setShowLink] = useState(false);
-
-  const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<Experience>({
-    resolver: zodResolver(experienceSchema),
-    defaultValues: {
-      theme: 'particles'
-    }
-  });
-
-  const selectedTheme = watch('theme');
-
-  const onSubmit = async (data: Experience) => {
-    try {
-      const url = await generateLink(data);
-      setGeneratedUrl(url);
-      toast.success("Expérience générée avec succès !");
-    } catch (err) {
-      toast.error("Erreur lors de la génération.");
-    }
-  };
-
-  const copyToClipboard = async () => {
-    if (!generatedUrl) return;
-    try {
-      await navigator.clipboard.writeText(generatedUrl);
-      setCopied(true);
-      setShowLink(false);
-      toast.success("Lien copié dans le presse-papier !");
-      setTimeout(() => setCopied(false), 3000);
-    } catch (err) {
-      toast.error("Impossible de copier le lien.");
-    }
-  };
-
   return (
-    <main className="min-h-screen relative flex items-center justify-center p-4 sm:p-8 overflow-hidden">
-      {/* Background Math Effect for ambiance */}
+    <main className="min-h-screen relative overflow-hidden bg-background">
       <ParticlesField />
-      
-      <div className="w-full max-w-xl z-10">
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-8"
-        >
-          <h1 className="font-display text-5xl md:text-6xl text-white mb-4 text-glow">TenderMoment</h1>
-          <p className="text-white/60 font-light text-lg">
-            Concevez une expérience numérique, éphémère et romantique.
-          </p>
-        </motion.div>
 
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="glass-panel p-6 sm:p-10"
-        >
-          <AnimatePresence mode="wait">
-            {!generatedUrl ? (
-              <motion.form 
-                key="form"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.4 }}
-                onSubmit={handleSubmit(onSubmit)} 
-                className="space-y-6"
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-8 sm:px-8 lg:px-10">
+        <header className="flex items-center justify-between pb-10">
+          <div>
+            <p className="text-primary/80 uppercase tracking-[0.35em] text-xs mb-2">TenderMoment</p>
+            <p className="text-white/45 text-sm">Amusez-vous</p>
+          </div>
+
+          <a
+            href="/creer"
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+          >
+            Commencer
+            <ArrowRight className="h-4 w-4" />
+          </a>
+        </header>
+
+        <section className="grid flex-1 items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="max-w-3xl"
+          >
+            <h1 className="font-display text-5xl leading-none text-white text-glow sm:text-6xl lg:text-7xl">
+              Offrez un message personnel dans une expérience soignée et confidentielle.
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/65 sm:text-xl">
+              TenderMoment vous permet de rédiger un message, de générer un lien privé et de le partager dans un cadre plus élégant. La promesse est simple : une expérience fluide, compréhensible et immédiatement crédible.
+            </p>
+
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+              <a
+                href="/creer"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-4 text-sm font-semibold text-black transition hover:bg-white/90"
               >
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/80 ml-1">Pour qui ?</label>
-                  <input 
-                    {...register("recipientName")}
-                    placeholder="Ex: Mon amour, Sophie, Alexandre..."
-                    className="glass-input"
-                  />
-                  {errors.recipientName && (
-                    <p className="text-destructive text-sm mt-1 ml-1">{errors.recipientName.message}</p>
-                  )}
-                </div>
+                Créer un message
+                <ArrowRight className="h-4 w-4" />
+              </a>
+              <a
+                href="#fonctionnement"
+                className="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                Voir le fonctionnement
+              </a>
+            </div>
+          </motion.div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/80 ml-1">De la part de</label>
-                  <input 
-                    {...register("senderName")}
-                    placeholder="Votre prénom ou surnom"
-                    className="glass-input"
-                  />
-                  {errors.senderName && (
-                    <p className="text-destructive text-sm mt-1 ml-1">{errors.senderName.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/80 ml-1">Votre message</label>
-                  <textarea 
-                    {...register("message")}
-                    placeholder="Écrivez ce que vous avez sur le cœur..."
-                    className="glass-input min-h-[120px] resize-none"
-                  />
-                  {errors.message && (
-                    <p className="text-destructive text-sm mt-1 ml-1">{errors.message.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-white/80 ml-1">Ambiance Visuelle</label>
-                  <div className="grid grid-cols-3 gap-3">
-                    
-                    <label className={`
-                      relative flex flex-col items-center justify-center p-4 rounded-xl cursor-pointer transition-all duration-300 border
-                      ${selectedTheme === 'particles' 
-                        ? 'bg-primary/20 border-primary/50 shadow-[0_0_20px_rgba(220,20,60,0.2)]' 
-                        : 'bg-white/[0.02] border-white/10 hover:bg-white/[0.05]'}
-                    `}>
-                      <input type="radio" value="particles" {...register("theme")} className="hidden" />
-                      <Sparkles className={`w-6 h-6 mb-2 ${selectedTheme === 'particles' ? 'text-primary' : 'text-white/40'}`} />
-                      <span className="text-xs font-medium text-white/80">Constellation</span>
-                    </label>
-
-                    <label className={`
-                      relative flex flex-col items-center justify-center p-4 rounded-xl cursor-pointer transition-all duration-300 border
-                      ${selectedTheme === 'hearts' 
-                        ? 'bg-primary/20 border-primary/50 shadow-[0_0_20px_rgba(220,20,60,0.2)]' 
-                        : 'bg-white/[0.02] border-white/10 hover:bg-white/[0.05]'}
-                    `}>
-                      <input type="radio" value="hearts" {...register("theme")} className="hidden" />
-                      <Heart className={`w-6 h-6 mb-2 ${selectedTheme === 'hearts' ? 'text-primary' : 'text-white/40'}`} />
-                      <span className="text-xs font-medium text-white/80">Ascension</span>
-                    </label>
-
-                    <label className={`
-                      relative flex flex-col items-center justify-center p-4 rounded-xl cursor-pointer transition-all duration-300 border
-                      ${selectedTheme === 'waves' 
-                        ? 'bg-primary/20 border-primary/50 shadow-[0_0_20px_rgba(220,20,60,0.2)]' 
-                        : 'bg-white/[0.02] border-white/10 hover:bg-white/[0.05]'}
-                    `}>
-                      <input type="radio" value="waves" {...register("theme")} className="hidden" />
-                      <WavesIcon className={`w-6 h-6 mb-2 ${selectedTheme === 'waves' ? 'text-primary' : 'text-white/40'}`} />
-                      <span className="text-xs font-medium text-white/80">Ondes Pures</span>
-                    </label>
-
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="glass-panel p-6 sm:p-8"
+          >
+            <div className="space-y-5">
+              <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
+                <p className="text-sm uppercase tracking-[0.3em] text-white/40">Parcours utilisateur</p>
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <p className="text-white font-medium">1. Personnalisez</p>
+                    <p className="text-sm leading-6 text-white/55">Renseignez le destinataire, votre signature, le message et l’univers visuel souhaité.</p>
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">2. Générez</p>
+                    <p className="text-sm leading-6 text-white/55">Un lien de consultation est créé immédiatement, sans inscription.</p>
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">3. Partagez</p>
+                    <p className="text-sm leading-6 text-white/55">Le destinataire ouvre une page dédiée et découvre votre message dans une mise en scène adaptée.</p>
                   </div>
                 </div>
+              </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  disabled={isSubmitting}
-                  className="w-full mt-6 py-4 rounded-xl font-medium tracking-wide flex items-center justify-center gap-2
-                    bg-white text-black shadow-[0_0_30px_rgba(255,255,255,0.2)]
-                    hover:bg-gray-100 hover:shadow-[0_0_40px_rgba(255,255,255,0.4)]
-                    transition-all duration-300 group"
-                >
-                  Créer l'expérience
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </motion.button>
-              </motion.form>
-            ) : (
-              <motion.div 
-                key="result"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="flex flex-col items-center justify-center py-8 text-center space-y-6"
-              >
-                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-2 shadow-[0_0_30px_rgba(220,20,60,0.3)] text-primary">
-                  <Sparkles className="w-8 h-8" />
-                </div>
-                
-                <h2 className="font-display text-3xl text-white">Magie Encodée</h2>
-                <p className="text-white/60 text-sm max-w-sm">
-                  Le moment a été scellé mathématiquement dans ce lien. Aucune donnée n'est sauvegardée sur nos serveurs.
+              <div className="rounded-2xl border border-primary/15 bg-primary/10 p-5">
+                <p className="text-sm font-medium text-white">Confidentialité</p>
+                <p className="mt-2 text-sm leading-6 text-white/65">
+                  Le contenu n’est pas accessible publiquement : l’ouverture de l’expérience nécessite le lien correspondant.
                 </p>
+              </div>
+            </div>
+          </motion.div>
+        </section>
 
-                <div className="w-full bg-black/40 border border-white/10 rounded-xl p-3 flex items-center gap-3">
-                  <input 
-                    readOnly 
-                    value={generatedUrl}
-                    type={showLink ? "text" : "password"}
-                    className="bg-transparent text-white/50 text-sm w-full outline-none truncate font-mono"
-                  />
-                  <button
-                    onClick={() => setShowLink((v) => !v)}
-                    className="px-3 py-2 text-xs font-medium bg-white/10 hover:bg-white/20 text-white/80 rounded-lg transition-colors flex-shrink-0"
-                    title={showLink ? "Masquer le lien" : "Afficher le lien"}
-                  >
-                    {showLink ? "Masquer" : "Afficher"}
-                  </button>
-                  <button 
-                    onClick={copyToClipboard}
-                    className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors flex-shrink-0"
-                    title="Copier le lien"
-                  >
-                    {copied ? <CheckCircle2 className="w-5 h-5 text-green-400" /> : <Copy className="w-5 h-5" />}
-                  </button>
-                </div>
+        <section id="fonctionnement" className="pb-8 pt-16">
+          <div className="mb-8 max-w-2xl">
+            <p className="text-primary/80 uppercase tracking-[0.35em] text-xs mb-3">Fonctionnement</p>
+            <h2 className="font-display text-4xl text-white sm:text-5xl">Un parcours simple, du message au partage</h2>
+            <p className="mt-4 text-white/60 leading-7">
+              Tout est pensé pour aller à l’essentiel : rédiger, générer un lien, puis partager un moment personnel dans un cadre discret.
+            </p>
+          </div>
 
-                <div className="pt-4 flex flex-col gap-3 w-full">
-                  <motion.button
-                    onClick={() => window.open(generatedUrl, '_blank')}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full py-4 rounded-xl font-medium tracking-wide bg-gradient-to-r from-primary to-primary/80 text-white shadow-[0_0_20px_rgba(220,20,60,0.3)]"
-                  >
-                    Prévisualiser
-                  </motion.button>
-                  <button
-                    onClick={() => setGeneratedUrl(null)}
-                    className="w-full py-3 rounded-xl font-medium text-white/50 hover:text-white transition-colors"
-                  >
-                    Créer un nouveau moment
-                  </button>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {benefits.map(({ icon: Icon, title, description }) => (
+              <div key={title} className="glass-panel p-6">
+                <div className="mb-4 inline-flex rounded-2xl border border-white/10 bg-white/5 p-3 text-primary">
+                  <Icon className="h-5 w-5" />
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+                <h3 className="text-lg font-semibold text-white">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-white/60">{description}</p>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     </main>
   );
